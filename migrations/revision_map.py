@@ -19,6 +19,13 @@ class RevisionMap(object):
     def next(self):
         return self.last.revision + 1 if self.last is not None else 0
 
+    def list(self):
+        revisions = []
+        for rev in range(self.next()):
+            revisions.append(rev)
+
+        return revisions
+
     def __str__(self):
         if self.head is None:
             return "<EMPTY>"
