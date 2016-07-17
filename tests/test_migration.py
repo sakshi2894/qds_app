@@ -1,4 +1,5 @@
 import pytest
+import inspect
 import os.path
 from migrations import migrations
 
@@ -14,3 +15,20 @@ def test_generate_first_migration(tmpdir_factory):
     mig = migrations.Migrations(path)
     migration_path = mig.generate("First Migration")
     assert(os.path.exists(migration_path))
+
+
+def test_single_upgrade():
+    path = "%s/fixtures/upgrade" % \
+        os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    mig = migrations.Migrations(path)
+    mig.upgrade()
+    assert True
+
+
+def test_single_pending():
+    path = "%s/fixtures/upgrade" % \
+        os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    mig = migrations.Migrations(path)
+    pending = mig.pending()
+    assert (len(pending) == 1)
+

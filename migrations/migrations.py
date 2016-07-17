@@ -12,7 +12,8 @@ from revision import Revision
 
 
 class Migrations(object):
-    def __init__(self, path):
+    def __init__(self, path, current=0):
+        self.current = current
         self.last = None
         self.map = {}
 
@@ -39,6 +40,22 @@ class Migrations(object):
         revisions = []
         for rev in range(self.next()):
             revisions.append(rev)
+
+        return revisions
+
+    def upgrade(self):
+        while self.current < self.last.revision:
+            self.current += 1
+            logging.info("Run migration `%d`" % self.map[self.current].revision)
+            self.map[self.current].module.upgrade()
+
+    def pending(self):
+        temp_current = self.current
+        revisions = []
+        while temp_current < self.last.revision:
+            temp_current += 1
+            logging.debug("Add migration `%d`" % self.map[temp_current].revision)
+            revisions.append(self.map[temp_current])
 
         return revisions
 
