@@ -71,7 +71,7 @@ class Migrations(object):
 
     def _generate(self, message, out_stream):
         revision = self.next()
-        template = Template(filename="%s/script.py.mako" % self.base_path)
+        template = Template(filename="%s/mako_template.py" % self.base_path)
 
         try:
             output = template.render_unicode(up_revision=revision,
