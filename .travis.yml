@@ -1,11 +1,18 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-# command to install dependencies
+- '2.6'
+- '2.7'
 install:
-  - pip install .
-  - pip install -r requirements.txt
-  - pip install -U pytest
-# command to run tests
+- pip install .
+- pip install -r requirements.txt
+- pip install -U pytest
 script: py.test
+deploy:
+  provider: pypi
+  user: python_migrations
+  password:
+    secure: l9EiDF0on7FUYXij1toP8K2Ce/HBW0oq0fDkQYvsrlXOfLT38e4hjBCo5tJenYuhXN2KQbSR+893pM9gUNPgAWUjzGgHLxbcb7C0WKXiZkLFxywtFD3nXNx0Q0oc9oMBTSmQiVuwPp7p6P2m9PyrokUtVu8F3SrKzVJk34w4qQwHfZjFao1c7kYsBfDjUcXgzvQj+E46qH5tx5zYK69Iqjbm1F/0yQ3hoTpR5hiZPY4uKmrciWx96WDNmQOTJKy+hM3O4g+uc2pDTVNRrjexELVdW4ojiVW1Bp6YreGkvYnYKoZmmu0/U55CjV/RWoZbQP3Ht/a7XCe+Fkcj7o2gJDpkg5fSqoDP1HarXPEsxQQy5VQ3zEb26cyRlIMs2GtpPzZYTZ0MpAQ/HsZowLYAfgLJ1xBMd4nJU0SYBFNdmzi5YzkKp3lVWoFMXebWky0TsKsyLG3S2Ko7/zM3nzTulie4nRoUbwljehO8nsbDNDIIMshWxx5CpiAEcuUsesBbW7eTJeTfwatnB5QsrfncZVeIJ35MUzzl4HGyIO9ZYXUgJV7FVi9yfOGOzOfsIcixTL1uVnXBgFrDkn3rj5KrLAjVhv0N7VZuCLsS2YKG+TADkdBw3Tl+bHvUTLXD7BZwCrncLLKUgnKcxwTJCZJluMSQJa1gsa+cv279G/Ue4jo=
+  on:
+    tags: true
+    distributions: sdist bdist_wheel
+    repo: vrajat/python-migrations
