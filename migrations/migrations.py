@@ -12,8 +12,9 @@ from revision import Revision
 
 
 class Migrations(object):
-    def __init__(self, path, current=0):
+    def __init__(self, path, context={}, current=-1):
         self.current = current
+        self.context = context
         self.last = None
         self.map = {}
 
@@ -23,6 +24,8 @@ class Migrations(object):
         for file_ in glob.glob("%s/*.py" % path):
             revision = Revision(path, file_)
             self.insert(revision)
+
+        self.context["revisions.upgraded"] = []
 
     def insert(self, revision):
         self.map[revision.revision] = revision
@@ -44,10 +47,13 @@ class Migrations(object):
         return revisions
 
     def upgrade(self):
+        logging.info(self.context)
         while self.current < self.last.revision:
             self.current += 1
             logging.info("Run migration `%d`" % self.map[self.current].revision)
-            self.map[self.current].module.upgrade()
+            self.map[self.current].module.upgrade(self.context)
+
+        logging.info(self.context)
 
     def pending(self):
         temp_current = self.current
@@ -76,7 +82,11 @@ class Migrations(object):
         try:
             output = template.render_unicode(up_revision=revision,
                                              create_date=datetime.datetime.now(),
-                                             message=message).encode("utf-8")
+                                             message=message,
+                                             upgrades="""
+    context["revisions.upgraded"].append(revision)
+    print context""").encode("utf-8")
+
         except:
             with tempfile.NamedTemporaryFile(suffix='.txt', delete=False) as ntf:
                 ntf.write(
@@ -97,11 +107,17 @@ class Migrations(object):
     def generate(self, message):
         revision = self.next()
 
-        destination_name = message[:15] if len(message) > 15 else message
-        destination_name = string.replace(destination_name, ' ', '_')
-        destination_path = "%s/%s_%s.py" % (self.path, revision, destination_name)
+        message_trunc = message[:15] if len(message) > 15 else message
+        message_trunc = string.replace(message_trunc, ' ', '_')
+        destination_name = "%s_%s.py" % (revision, message_trunc)
+        destination_path = "%s/%s" % (self.path, destination_name)
 
         out_stream = io.FileIO(destination_path, "wb")
         self._generate(message, out_stream)
+        out_stream.close()
         logging.info("Created new migration `%s` " % destination_path)
+
+        revision = Revision(self.path, destination_name)
+        self.insert(revision)
+
         return destination_path

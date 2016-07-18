@@ -24,7 +24,6 @@ class Revision(object):
 
         module_id = re.sub(r'\W', "_", filename)
         path = os.path.join(dir_, filename)
-        _, ext = os.path.splitext(filename)
 
         with open(path, 'rb') as fp:
             module = imp.load_source(module_id, path, fp)
