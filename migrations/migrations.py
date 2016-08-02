@@ -13,7 +13,10 @@ from revision import Revision
 
 class Migrations(object):
     def __init__(self, path, context={}, current=-1):
-        self.current = current
+        if(current is None):
+            self.current = -1
+        else:
+            self.current = int(current)
         self.context = context
         self.last = None
         self.map = {}
@@ -26,6 +29,7 @@ class Migrations(object):
             self.insert(revision)
 
         self.context["revisions.upgraded"] = []
+        self.context["revisions.downgraded"] = []
 
     def insert(self, revision):
         self.map[revision.revision] = revision
@@ -46,12 +50,33 @@ class Migrations(object):
 
         return revisions
 
-    def upgrade(self):
+    def upgrade(self, version=None):
+        if version is not None:
+            version = int(version)
+            self.map[version].module.upgrade(self.context)
+            return
+
+        logging.info("current: %d", self.current)
         logging.info(self.context)
         while self.current < self.last.revision:
             self.current += 1
             logging.info("Run migration `%d`" % self.map[self.current].revision)
             self.map[self.current].module.upgrade(self.context)
+
+        logging.info(self.context)
+
+    def downgrade(self, revision=None, version=None):
+        if version is not None:
+            version = int(version)
+            self.map[version].module.downgrade(self.context)
+            return
+
+        self.current = 5
+        logging.info(self.context)
+        while self.current > revision:
+            logging.info("Revert migration `%d`" % self.map[self.current].revision)
+            self.map[self.current].module.downgrade(self.context)
+            self.current = self.current - 1
 
         logging.info(self.context)
 
