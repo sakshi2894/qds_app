@@ -20,6 +20,7 @@ setup(
     scripts=[],
     install_requires=required,
     long_description=read('README.md'),
+    url="https://github.com/vrajat/qds_app.git"
 )
 
 
