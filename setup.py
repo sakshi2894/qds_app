@@ -11,7 +11,6 @@ def read(file_name):
 
 setup(
     name="qds_app",
-    packages=["qds_app"],
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     author="Rajat Venkatesh",
