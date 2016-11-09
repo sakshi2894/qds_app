@@ -1,1 +1,1 @@
-migrations/_version.py export-subst
+qds_app/_version.py export-subst

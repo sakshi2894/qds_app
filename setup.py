@@ -10,7 +10,8 @@ def read(file_name):
     return open(os.path.join(os.path.dirname(__file__), file_name)).read()
 
 setup(
-    name="migrations",
+    name="qds_app",
+    packages=["qds_app"],
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     author="Rajat Venkatesh",
