@@ -3,3 +3,4 @@ include qds_app/_version.py
 include requirements.txt
 include README.md
 include LICENSE
+include CHANGELOG
